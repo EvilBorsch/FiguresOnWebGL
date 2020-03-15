@@ -174,12 +174,12 @@ function setUpGui() {
         break;
       case 'Cone':
         const cone = createCone(parameters.fill, 3, 3);
-        cone.position.set(0, 3, 0);
+        cone.position.set(0, 2, 0);
         addToScene(cone);
         break;
       case 'Cylinder':
         const cylinder = createCylinder(parameters.fill, 3, 3, 3);
-        cylinder.position.set(0, 0, 0);
+        cylinder.position.set(0, 2, 0);
         addToScene(cylinder);
         break;
       case 'Thorus':
@@ -189,6 +189,7 @@ function setUpGui() {
         break;
       case 'Tree':
         const tree = createTree(parameters.fill);
+        tree.position.set(0, 1, 0);
         addToScene(tree);
     }
   }
