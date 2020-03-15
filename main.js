@@ -26,18 +26,15 @@ function setUpCamera() {
 }
 
 
-function createCube(isFilled) {
-  clearScene();
+function createCube(isFilled, cubeSize) {
   let mesh;
-  const cubeSize = 4;
   const cubeGeo = new THREE.BoxBufferGeometry(cubeSize, cubeSize, cubeSize);
   const cubeMat = new THREE.MeshPhongMaterial({color: '#8AC'});
   if (isFilled) {
     mesh = new THREE.Mesh(cubeGeo, cubeMat);
   } else mesh = new THREE.LineSegments(cubeGeo, cubeMat);
-  mesh.position.set(cubeSize + 1, cubeSize / 2, 0);
-  objects[0] = mesh;
-  scene.add(objects[0]);
+
+  return mesh;
 }
 
 
@@ -66,82 +63,89 @@ function clearScene() {
   scene.remove(objects[0]);
 }
 
-
-function createSphere(isFilled) {
-  let mesh;
+function addToScene(mesh) {
   clearScene();
-  const sphereRadius = 3;
-  const sphereWidthDivisions = 32;
-  const sphereHeightDivisions = 16;
-  const sphereGeo = new THREE.SphereBufferGeometry(sphereRadius, sphereWidthDivisions, sphereHeightDivisions);
-  const sphereMat = new THREE.MeshPhongMaterial({color: '#CA8'});
-  if (isFilled) {
-    mesh = new THREE.Mesh(sphereGeo, sphereMat);
-  } else mesh = new THREE.LineSegments(sphereGeo, sphereMat);
-  mesh.position.set(-sphereRadius - 1, sphereRadius + 2, 0);
   objects[0] = mesh;
   scene.add(objects[0]);
 }
 
+function createSphere(isFilled, radius, coords) {
+  let mesh;
+  const sphereRadius = radius;
+  const sphereWidthDivisions = 32;
+  const sphereHeightDivisions = 16;
+  const sphereGeo = new THREE.SphereBufferGeometry(sphereRadius, sphereWidthDivisions, sphereHeightDivisions);
+  const sphereMat = new THREE.MeshPhongMaterial({color: '#cccac2'});
+  if (isFilled) {
+    mesh = new THREE.Mesh(sphereGeo, sphereMat);
+  } else mesh = new THREE.LineSegments(sphereGeo, sphereMat);
+  mesh.position.set(...coords);
+  return mesh;
+}
+
+
+function createCone(isFilled, radius, height) {
+  let mesh;
+  const segments = 16;
+  const geometry = new THREE.ConeBufferGeometry(radius, height, segments);
+  const material = new THREE.MeshPhongMaterial({color: '#cccac2'});
+  if (isFilled) {
+    mesh = new THREE.Mesh(geometry, material);
+  } else mesh = new THREE.LineSegments(geometry, material);
+  return mesh;
+}
+
+function createCylinder(isFilled, radiusTop, radiusBottom, height) {
+  console.log('cylinder');
+  let mesh;
+  const radialSegments = 12;
+  const geometry = new THREE.CylinderBufferGeometry(radiusTop, radiusBottom, height, radialSegments);
+  const material = new THREE.MeshPhongMaterial({color: '#cccac2'});
+  if (isFilled) {
+    mesh = new THREE.Mesh(geometry, material);
+  } else mesh = new THREE.LineSegments(geometry, material);
+  return mesh;
+}
+
 function createSnowman(isFilled) {
-  clearScene();
   let item;
   const group = new THREE.Group();
-
-
-  let itemGeometry = new THREE.SphereGeometry(4.5, 10);
-  let wireframe = new THREE.MeshPhongMaterial({color: '#CA8'});
-  if (isFilled) {
-    item = new THREE.Mesh(itemGeometry, wireframe);
-  } else {
-    item = new THREE.LineSegments(wireframe);
-  }
+  item = createSphere(isFilled, 3, [0, 3, 0]);
   group.add(item);
-
-  itemGeometry = new THREE.SphereGeometry(3, 10);
-  wireframe = new THREE.MeshPhongMaterial({color: '#CA8'});
-  if (isFilled) {
-    item = new THREE.Mesh(itemGeometry, wireframe);
-  } else {
-    item = new THREE.LineSegments(wireframe);
-  }
-  item.position.y = 6;
+  item = createSphere(isFilled, 2, [0, 7, 0]);
   group.add(item);
-
-  itemGeometry = new THREE.SphereGeometry(1.5, 10);
-  wireframe = new THREE.MeshPhongMaterial({color: '#CA8'});
-  if (isFilled) {
-    item = new THREE.Mesh(itemGeometry, wireframe);
-  } else {
-    item = new THREE.LineSegments(wireframe);
-  }
-  item.position.y = 5.5 + 4.3;
+  item = createSphere(isFilled, 1, [0, 9, 0]);
   group.add(item);
+  return group;
+}
 
-  itemGeometry = new THREE.SphereGeometry(0.2, 5);
-  wireframe = new THREE.MeshPhongMaterial({color: '#CA8'});
+function createThorus(isFilled, radius, tubeRadius) {
+  let mesh;
+  const radialSegments = 24;
+  const tubularSegments = 24;
+  const geometry = new THREE.TorusBufferGeometry(radius, tubeRadius, radialSegments, tubularSegments);
+  const material = new THREE.MeshPhongMaterial({color: '#cccac2'});
   if (isFilled) {
-    item = new THREE.Mesh(itemGeometry, wireframe);
-  } else {
-    item = new THREE.LineSegments(wireframe);
-  }
-  item.position.y = 5.5 + 4.3 + 0.5;
-  item.position.z = 1.3;
-  group.add(item);
+    mesh = new THREE.Mesh(geometry, material);
+  } else mesh = new THREE.LineSegments(geometry, material);
+  return mesh;
+}
 
-  itemGeometry = new THREE.SphereGeometry(2, 50);
-  wireframe = new THREE.MeshPhongMaterial({color: '#CA8'});
-  if (isFilled) {
-    item = new THREE.Mesh(itemGeometry, wireframe);
-  } else {
-    item = new THREE.LineSegments(wireframe);
-  }
-  item.position.x = -0.7;
-  item.position.y = 5.5 + 4.3 + 0.5;
-  item.position.z = 1;
+function createTree(isFilled) {
+  let item;
+  const group = new THREE.Group();
+  item = createCylinder(isFilled, 1, 1, 2);
   group.add(item);
-  objects[0] = group;
-  scene.add(objects[0]);
+  item = createCone(isFilled, 2, 2);
+  item.position.set(0, 2, 0);
+  group.add(item);
+  item = createCone(isFilled, 2, 2);
+  item.position.set(0, 3, 0);
+  group.add(item);
+  item = createCone(isFilled, 2, 2);
+  item.position.set(0, 4, 0);
+  group.add(item);
+  return group;
 }
 
 
@@ -156,18 +160,40 @@ function setUpGui() {
   function ListHandler(v) {
     switch (v) {
       case 'Cube':
-        createCube(parameters.fill);
+        const cube = createCube(parameters.fill, 4);
+        cube.position.set(5, 2, 0);
+        addToScene(cube);
         break;
       case 'Sphere':
-        createSphere(parameters.fill);
+        const sphere = createSphere(parameters.fill, 3, [-3 - 1, 3 + 2, 0]);
+        addToScene(sphere);
         break;
       case 'Snowman':
-        createSnowman(parameters.fill);
+        const snowman = createSnowman(parameters.fill);
+        addToScene(snowman);
         break;
+      case 'Cone':
+        const cone = createCone(parameters.fill, 3, 3);
+        cone.position.set(0, 3, 0);
+        addToScene(cone);
+        break;
+      case 'Cylinder':
+        const cylinder = createCylinder(parameters.fill, 3, 3, 3);
+        cylinder.position.set(0, 0, 0);
+        addToScene(cylinder);
+        break;
+      case 'Thorus':
+        const thorus = createThorus(parameters.fill, 3, 2);
+        thorus.position.set(3, 5, 3);
+        addToScene(thorus);
+        break;
+      case 'Tree':
+        const tree = createTree(parameters.fill);
+        addToScene(tree);
     }
   }
 
-  const stringList = ['Sphere', 'Cube', 'Snowman'];
+  const stringList = ['Sphere', 'Cube', 'Snowman', 'Cone', 'Cylinder', 'Thorus', 'Tree'];
   gui.add(parameters, 'w', stringList).name('Список фигур').onChange(ListHandler);
 
   const folder1 = gui.addFolder('Coordinates');
