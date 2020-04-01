@@ -116,6 +116,18 @@ function createSnowman(isFilled) {
   group.add(item);
   item = createSphere(isFilled, 1, [0, 9, 0]);
   group.add(item);
+  item = createCylinder(isFilled, 1, 1, 1.8);
+  item.position.set(0, 10.4, 0);
+  group.add(item);
+  item = createCylinder(isFilled, 0.09, 0.09, 7);
+  item.position.set(0, 7, 0);
+  item.rotation.x = 8;
+  group.add(item);
+  item = createCone(isFilled, 0.25, 1);
+  item.position.set(1, 9, 0);
+  item.rotation.z = 4.7;
+  group.add(item);
+
   return group;
 }
 
